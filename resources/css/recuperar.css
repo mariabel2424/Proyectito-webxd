@@ -1,0 +1,174 @@
+* {
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+/* Fondo general pastel */
+.recuperar-page {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #a0c4ff; /* Fondo suave */
+  padding: 20px;
+}
+
+/* Contenedor del formulario */
+.recuperar-container {
+  position: relative; /* para posicionar la X dentro del recuadro */
+  background: #ffffff;
+  padding: 38px 32px;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 400px;
+  text-align: left;
+
+  /* En vez de una línea vertical, borde azul alrededor del recuadro */
+  border: 4px solid #1d4ed8;
+}
+
+/* Botón X arriba a la derecha */
+.close-button {
+  position: absolute; /* se posiciona relativo a .recuperar-container */
+  top: 10px;
+  right: 10px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  background: #e0ecff;
+  color: #1e3a8a;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+.close-button:hover {
+  background: #c7d8ff;
+  color: #111827;
+}
+
+/* Título */
+.recuperar-container h2 {
+  color: #1d4ed8;
+  font-size: 24px;
+  margin-bottom: 18px;
+  text-align: center;
+  font-weight: 700;
+}
+
+/* Mensajes */
+.mensaje-ok {
+  background-color: #e3fcef;
+  color: #166534;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+  font-size: 14px;
+}
+
+.alert {
+  background-color: #fdecea;
+  color: #b91c1c;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+  font-size: 14px;
+}
+
+.alert ul {
+  margin-left: 18px;
+}
+
+/* Etiquetas e inputs */
+.recuperar-container label {
+  display: block;
+  text-align: left;
+  font-weight: 600;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+.recuperar-container input[type="email"] {
+  width: 100%;
+  padding: 11px 12px;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  margin-bottom: 18px;
+  font-size: 14px;
+  background-color: #f7f8fc;
+  transition: all 0.3s ease;
+}
+
+.recuperar-container input:focus {
+  border-color: #1d4ed8;
+  box-shadow: 0 0 6px rgba(29, 78, 216, 0.3);
+  outline: none;
+  background-color: #ffffff;
+}
+
+.recuperar-container input:disabled {
+  opacity: 0.8;
+  cursor: not-allowed;
+}
+
+/* Botón */
+.recuperar-container button[type="submit"] {
+  width: 100%;
+  padding: 12px;
+  background-color: #1d4ed8;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.recuperar-container button[type="submit"]:hover:not(:disabled) {
+  background-color: #1e40af;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(30, 64, 175, 0.35);
+}
+
+.recuperar-container button[type="submit"]:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Links */
+.info-link {
+  margin-top: 12px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.info-link a {
+  color: #1d4ed8;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.info-link a:hover {
+  text-decoration: underline;
+  color: #1e40af;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .recuperar-container {
+    padding: 28px 20px;
+  }
+
+  .recuperar-container h2 {
+    font-size: 22px;
+  }
+}

@@ -1,0 +1,218 @@
+/* ===== Reset y cuerpo ===== */
+body {
+  margin: 0;
+  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #e7ecf5 0%, #f7f9fc 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* ===== Contenedor principal ===== */
+.login-horizontal-container {
+  display: flex;
+  background: #fff;
+  border-radius: 18px;
+  overflow: hidden;
+  width: 950px;
+  max-width: 95%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+  position: relative;
+  animation: fadeIn 0.5s ease;
+}
+
+/* ===== Animación de aparición ===== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Botón de cierre ===== */
+.close-button {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  border: none;
+  background: rgba(255, 255, 255, 0.8);
+  color: #4b4f62;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+  transition: 0.25s;
+}
+
+.close-button:hover {
+  background: #fff;
+  color: #222;
+  transform: scale(1.08);
+}
+
+/* ===== Lado izquierdo (formulario) ===== */
+.login-left {
+  flex: 1;
+  padding: 50px 45px;
+  background-color: #faf9ff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.login-left h2 {
+  margin-bottom: 25px;
+  color: #5b7bb4;
+  font-size: 30px;
+  text-align: center;
+  font-weight: 700;
+}
+
+/* ===== Inputs modernos ===== */
+.login-left input,
+.login-left select {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 18px;
+  border: 1.6px solid #d7d9e4;
+  border-radius: 10px;
+  outline: none;
+  font-size: 15px;
+  background: #fff;
+  transition: 0.25s ease;
+}
+
+.login-left input:focus,
+.login-left select:focus {
+  border-color: #709ad0;
+  box-shadow: 0 0 0 3px rgba(100, 150, 220, 0.25);
+}
+
+/* ===== Botones ===== */
+.botones {
+  display: flex;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.botones button {
+  flex: 1;
+  padding: 13px;
+  font-size: 16px;
+  background: linear-gradient(135deg, #c07ac8, #9d68d0);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.25s ease;
+  box-shadow: 0 4px 15px rgba(150, 100, 200, 0.25);
+}
+
+.botones button:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #b16ac2, #8753c4);
+}
+
+/* ===== Checkbox ===== */
+.checkbox-terminos {
+  margin: 12px 0;
+  font-size: 14px;
+  color: #2f3550;
+  display: flex;
+  align-items: center;
+}
+
+.checkbox-terminos input {
+  margin-right: 10px;
+  transform: scale(1.2);
+}
+
+/* ===== Mensajes ===== */
+.mensaje {
+  margin-top: 15px;
+  text-align: center;
+  color: #4b6783;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.alert {
+  background-color: #ffe5e8;
+  color: #a72c3e;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+/* ===== Links ===== */
+.links {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.links a {
+  color: #6b70c9;
+  font-weight: 500;
+  text-decoration: none;
+  transition: 0.2s ease;
+}
+
+.links a:hover {
+  color: #5056ad;
+  text-decoration: underline;
+  transform: scale(1.04);
+}
+
+/* ===== Lado derecho (imagen) ===== */
+.login-right {
+  flex: 1;
+  background: linear-gradient(135deg, #cbc5ff, #d9caef);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  text-align: center;
+}
+
+.login-right img {
+  width: 80%;
+  border-radius: 14px;
+  box-shadow: 0 6px 20px rgba(50, 40, 100, 0.25);
+  margin-bottom: 20px;
+}
+
+.info-text h1 {
+  font-size: 23px;
+  color: #2b2d42;
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+.info-text p {
+  color: #1d1b26;
+  font-size: 15px;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .login-right img {
+    width: 95%;
+  }
+}
+
+@media (max-width: 768px) {
+  .login-horizontal-container {
+    flex-direction: column;
+  }
+
+  .login-right {
+    display: none;
+  }
+}
