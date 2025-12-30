@@ -1,5 +1,5 @@
 <?php
-namespace App\Http\Controllers\API\Tutores;
+namespace App\Http\Controllers\API\Deportistas;
 use App\Http\Controllers\Controller;
 
 use App\Models\Tutor;
@@ -10,21 +10,22 @@ use Illuminate\Support\Facades\DB;
 class TutorController extends Controller
 {
     public function index(Request $request)
-    {
+{
+    try {
         $query = Tutor::with('usuario', 'deportistas');
 
         // Búsqueda general
-        if ($request->has('buscar')) {
+        if ($request->has('buscar') && !empty($request->buscar)) {
             $query->buscar($request->buscar);
         }
 
         // Filtro por estado
-        if ($request->has('activo')) {
+        if ($request->has('activo') && $request->activo !== '') {
             $query->where('activo', $request->activo);
         }
 
         // Filtro por parentesco
-        if ($request->has('parentesco')) {
+        if ($request->has('parentesco') && !empty($request->parentesco)) {
             $query->where('parentesco', $request->parentesco);
         }
 
@@ -32,8 +33,24 @@ class TutorController extends Controller
         $query->orderBy('apellidos', 'asc')->orderBy('nombres', 'asc');
 
         $tutores = $query->paginate(15);
-        return response()->json($tutores);
+        
+        return response()->json([
+            'success' => true,
+            'data' => $tutores,
+            'message' => 'Tutores obtenidos exitosamente'
+        ]);
+        
+    } catch (\Exception $e) {
+        \Log::error('Error en TutorController@index: ' . $e->getMessage());
+        \Log::error($e->getTraceAsString());
+        
+        return response()->json([
+            'success' => false,
+            'message' => 'Error interno del servidor: ' . $e->getMessage(),
+            'trace' => env('APP_DEBUG') ? $e->getTraceAsString() : null
+        ], 500);
     }
+}
 
     public function store(Request $request)
     {

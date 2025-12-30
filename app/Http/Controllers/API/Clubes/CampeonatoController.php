@@ -8,26 +8,141 @@ use Illuminate\Support\Str;
 
 class CampeonatoController extends Controller
 {
-    public function index(Request $request)
-    {
-        $query = Campeonato::with('clubes');
-
-        if ($request->has('estado')) {
-            $query->where('estado', $request->estado);
-        }
-
-        if ($request->has('categoria')) {
-            $query->where('categoria', $request->categoria);
-        }
-
-        if ($request->has('search')) {
-            $search = $request->search;
-            $query->where('nombre', 'like', "%{$search}%");
-        }
-
-        $campeonatos = $query->paginate(15);
-        return response()->json($campeonatos);
+   public function index(Request $request)
+{
+    \Log::info('=== API CAMPEONATOS - DEBUG INICIO ===');
+    
+    // 1. Verificar usuario autenticado
+    $user = auth()->user();
+    \Log::info('Usuario autenticado:', [
+        'id' => $user->id,
+        'name' => $user->name,
+        'email' => $user->email
+    ]);
+    
+    // 2. Verificar contadores con/sin SoftDeletes
+    $totalConTrashed = Campeonato::withTrashed()->count();
+    $totalSinTrashed = Campeonato::count();
+    $totalOnlyTrashed = Campeonato::onlyTrashed()->count();
+    
+    \Log::info('Contadores Campeonatos:', [
+        'con_trashed' => $totalConTrashed,
+        'sin_trashed' => $totalSinTrashed,
+        'only_trashed' => $totalOnlyTrashed,
+        'diferencia' => $totalConTrashed - $totalSinTrashed
+    ]);
+    
+    if ($totalOnlyTrashed > 0) {
+        \Log::info('Campeonatos eliminados (soft):', 
+            Campeonato::onlyTrashed()->get(['id_campeonato', 'nombre', 'deleted_at'])->toArray()
+        );
     }
+    
+    // 3. Verificar TODOS los campeonatos incluyendo eliminados
+    $todosCampeonatos = Campeonato::withTrashed()->get();
+    \Log::info('Todos los campeonatos (con trashed):', [
+        'count' => $todosCampeonatos->count(),
+        'ids' => $todosCampeonatos->pluck('id_campeonato')->toArray(),
+        'nombres' => $todosCampeonatos->pluck('nombre')->toArray(),
+        'deleted_ats' => $todosCampeonatos->pluck('deleted_at')->toArray()
+    ]);
+    
+    // 4. Verificar campeonatos sin eliminar
+    $campeonatosActivos = Campeonato::all();
+    \Log::info('Campeonatos activos (sin trashed):', [
+        'count' => $campeonatosActivos->count(),
+        'ids' => $campeonatosActivos->pluck('id_campeonato')->toArray()
+    ]);
+    
+    // 5. Construir consulta con filtros
+    \DB::enableQueryLog();
+    
+    $query = Campeonato::query(); // Por defecto excluye eliminados
+    
+    \Log::info('Consulta inicial (excluye eliminados):', [
+        'sql' => $query->toSql(),
+        'bindings' => $query->getBindings()
+    ]);
+    
+    // Aplicar filtros
+    if ($request->search) {
+        $query->where('nombre', 'like', "%{$request->search}%");
+        \Log::info('After search filter', ['search' => $request->search]);
+    }
+    
+    if ($request->estado && $request->estado !== 'all') {
+        $query->where('estado', $request->estado);
+        \Log::info('After estado filter', ['estado' => $request->estado]);
+    }
+    
+    if ($request->categoria && $request->categoria !== 'all') {
+        $query->where('categoria', $request->categoria);
+        \Log::info('After categoria filter', ['categoria' => $request->categoria]);
+    }
+    
+    $query->orderBy('created_at', 'desc');
+    
+    \Log::info('Consulta final antes de paginar:', [
+        'sql' => $query->toSql(),
+        'bindings' => $query->getBindings()
+    ]);
+    
+    // 6. Ejecutar y loguear resultados
+    $resultadosSinPaginar = $query->get();
+    \Log::info('Resultados sin paginar:', [
+        'count' => $resultadosSinPaginar->count(),
+        'data' => $resultadosSinPaginar->toArray()
+    ]);
+    
+    // 7. Paginar
+    $campeonatos = $query->paginate($request->per_page ?? 15);
+    
+    \Log::info('Queries ejecutadas:', \DB::getQueryLog());
+    
+    // 8. Log final
+    \Log::info('=== API CAMPEONATOS - DEBUG FIN ===', [
+        'pagination_total' => $campeonatos->total(),
+        'pagination_per_page' => $campeonatos->perPage(),
+        'pagination_current_page' => $campeonatos->currentPage(),
+        'pagination_last_page' => $campeonatos->lastPage(),
+        'pagination_data_count' => count($campeonatos->items()),
+        'pagination_data_ids' => collect($campeonatos->items())->pluck('id_campeonato')->toArray(),
+        'pagination_data_nombres' => collect($campeonatos->items())->pluck('nombre')->toArray()
+    ]);
+    
+    // 9. SOLUCIÓN TEMPORAL: Si no hay resultados, usar withTrashed
+    if ($campeonatos->total() === 0 && $totalConTrashed > 0) {
+        \Log::warning('No hay campeonatos activos, pero sí hay con trashed. Usando withTrashed...');
+        
+        $queryWithTrashed = Campeonato::withTrashed();
+        
+        // Re-aplicar filtros
+        if ($request->search) {
+            $queryWithTrashed->where('nombre', 'like', "%{$request->search}%");
+        }
+        
+        if ($request->estado && $request->estado !== 'all') {
+            $queryWithTrashed->where('estado', $request->estado);
+        }
+        
+        if ($request->categoria && $request->categoria !== 'all') {
+            $queryWithTrashed->where('categoria', $request->categoria);
+        }
+        
+        $campeonatos = $queryWithTrashed->orderBy('created_at', 'desc')
+                                        ->paginate($request->per_page ?? 15);
+        
+        \Log::info('Resultados con withTrashed:', [
+            'total' => $campeonatos->total(),
+            'data_count' => count($campeonatos->items())
+        ]);
+        
+        // Agregar flag para indicar que incluye eliminados
+        $campeonatos->withTrashed = true;
+    }
+    
+    return response()->json($campeonatos);
+}
 
     public function store(Request $request)
     {
