@@ -216,3 +216,12 @@ body {
     display: none;
   }
 }
+
+.botones.secundario {
+  background-color: #cfcfcf;
+  color: #333;
+}
+
+.botones.secundario:hover {
+  background-color: #b8b8b8;
+}
