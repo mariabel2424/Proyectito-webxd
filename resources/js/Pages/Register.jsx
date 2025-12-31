@@ -1,89 +1,29 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import "../../css/register.css";
 
 export default function Register() {
-  const [roles, setRoles] = useState([]);
-  const [cargandoRoles, setCargandoRoles] = useState(true);
-  
+
   const [formData, setFormData] = useState({
     nombre: "",
     apellido: "",
+    cedula: "",
+    categoria: "",
+    horario: "",
     email: "",
     telefono: "",
     direccion: "",
     password: "",
     password_confirmation: "",
-    id_rol: "",
   });
 
   const [mensaje, setMensaje] = useState("");
   const [errores, setErrores] = useState([]);
   const [cargando, setCargando] = useState(false);
 
-  // ================================
-  //  Cargar roles del backend
-  // ================================
-  useEffect(() => {
-    const cargarRoles = async () => {
-      try {
-        setCargandoRoles(true);
-        console.log("🔄 Intentando cargar roles desde: http://localhost:8000/api/roles");
-        
-        const response = await fetch("http://localhost:8000/api/roles", {
-          method: "GET",
-          headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json",
-          },
-        });
-
-        console.log("📡 Response status:", response.status);
-        console.log("📡 Response ok:", response.ok);
-
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error("❌ Error response:", errorText);
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        console.log("✅ Datos recibidos:", data);
-        console.log("✅ Tipo de datos:", typeof data, Array.isArray(data));
-
-        // Verificar si la respuesta tiene la estructura correcta
-        if (Array.isArray(data)) {
-          console.log("✅ Es un array directo, cantidad de roles:", data.length);
-          setRoles(data);
-        } else if (data.data && Array.isArray(data.data)) {
-          console.log("✅ Es un objeto con propiedad data (paginado), cantidad de roles:", data.data.length);
-          // Filtrar solo roles activos si vienen paginados
-          const rolesActivos = data.data.filter(rol => rol.activo !== false);
-          setRoles(rolesActivos);
-        } else {
-          console.error("❌ Estructura de datos inesperada:", data);
-          setRoles([]);
-        }
-
-      } catch (error) {
-        console.error("❌ Error completo:", error);
-        console.error("❌ Error name:", error.name);
-        console.error("❌ Error message:", error.message);
-        
-        // Mostrar error más específico
-        if (error.name === 'TypeError' && error.message.includes('fetch')) {
-          setErrores(prev => [...prev, "No se puede conectar al servidor. ¿Está corriendo Laravel en http://localhost:8000?"]);
-        } else {
-          setErrores(prev => [...prev, `Error al cargar roles: ${error.message}`]);
-        }
-        
-        setRoles([]);
-      } finally {
-        setCargandoRoles(false);
-      }
-    };
-
-    cargarRoles();
-  }, []);
+  // 🔙 FUNCIÓN REGRESAR
+  const handleRegresar = () => {
+    window.history.back();
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -100,8 +40,12 @@ export default function Register() {
 
     if (!formData.nombre) nuevosErrores.push("El nombre es obligatorio.");
     if (!formData.apellido) nuevosErrores.push("El apellido es obligatorio.");
-    if (!formData.email.includes("@")) nuevosErrores.push("El email no es válido.");
-    if (!formData.id_rol) nuevosErrores.push("Debes seleccionar un rol.");
+    if (!formData.cedula || formData.cedula.length !== 10)
+      nuevosErrores.push("La cédula debe tener 10 dígitos.");
+    if (!formData.categoria) nuevosErrores.push("Seleccione una categoría.");
+    if (!formData.horario) nuevosErrores.push("Seleccione un horario.");
+    if (!formData.email.includes("@"))
+      nuevosErrores.push("El email no es válido.");
     if (formData.password.length < 8)
       nuevosErrores.push("La contraseña debe tener mínimo 8 caracteres.");
     if (formData.password !== formData.password_confirmation)
@@ -117,8 +61,6 @@ export default function Register() {
     setMensaje("");
 
     try {
-      console.log("📤 Enviando datos:", formData);
-
       const response = await fetch("http://localhost:8000/api/register", {
         method: "POST",
         headers: {
@@ -129,47 +71,40 @@ export default function Register() {
       });
 
       const data = await response.json();
-      console.log("📥 Respuesta del servidor:", data);
 
       if (!response.ok) {
         const erroresServidor = [];
-
         if (data.errors) {
           for (const campo in data.errors) {
             erroresServidor.push(data.errors[campo][0]);
           }
-        } else if (data.message) {
-          erroresServidor.push(data.message);
         } else {
-          erroresServidor.push("Error desconocido al registrar");
+          erroresServidor.push("Error al registrar");
         }
-
         setErrores(erroresServidor);
       } else {
         setMensaje("✔ Registro exitoso");
-        setErrores([]);
 
-        // Limpiar formulario
         setFormData({
           nombre: "",
           apellido: "",
+          cedula: "",
+          categoria: "",
+          horario: "",
           email: "",
           telefono: "",
           direccion: "",
           password: "",
           password_confirmation: "",
-          id_rol: "",
         });
 
-        // Opcional: redirigir después de 2 segundos
         setTimeout(() => {
-         window.location.href = "/login";
-         }, 2000);
+          window.location.href = "/login";
+        }, 2000);
       }
 
     } catch (error) {
-      console.error("❌ Error de conexión:", error);
-      setErrores(["Error de conexión con el servidor. Verifica que el backend esté corriendo."]);
+      setErrores(["Error de conexión con el servidor."]);
     } finally {
       setCargando(false);
     }
@@ -178,7 +113,7 @@ export default function Register() {
   return (
     <div className="login-horizontal-container">
       <div className="login-left">
-        <h2>Crear Cuenta</h2>
+        <h2>Registrarse</h2>
 
         {mensaje && <p className="mensaje">{mensaje}</p>}
         {errores.length > 0 && (
@@ -192,105 +127,45 @@ export default function Register() {
         )}
 
         <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            name="nombre"
-            placeholder="Nombre"
-            value={formData.nombre}
-            onChange={handleChange}
-          />
+          <input type="text" name="nombre" placeholder="Nombre" value={formData.nombre} onChange={handleChange} />
+          <input type="text" name="apellido" placeholder="Apellido" value={formData.apellido} onChange={handleChange} />
+          <input type="text" name="cedula" placeholder="Cédula" value={formData.cedula} onChange={handleChange} />
 
-          <input
-            type="text"
-            name="apellido"
-            placeholder="Apellido"
-            value={formData.apellido}
-            onChange={handleChange}
-          />
-
-          {/* SELECT DE ROLES - CON DEBUGGING */}
-          <select
-            name="id_rol"
-            value={formData.id_rol}
-            onChange={handleChange}
-            disabled={cargandoRoles}
-            style={{ 
-              backgroundColor: cargandoRoles ? '#f0f0f0' : 'white',
-              cursor: cargandoRoles ? 'wait' : 'pointer'
-            }}
-          >
-            <option value="">
-              {cargandoRoles 
-                ? "Cargando roles..." 
-                : roles.length > 0 
-                  ? "Selecciona un rol" 
-                  : "⚠️ No hay roles disponibles"}
-            </option>
-            {roles.length > 0 ? (
-              roles.map((rol) => (
-                <option key={rol.id_rol} value={rol.id_rol}>
-                  {rol.nombre}
-                </option>
-              ))
-            ) : null}
+          <select name="categoria" value={formData.categoria} onChange={handleChange}>
+            <option value="">Seleccione una categoría</option>
+            <option value="niños">Niños</option>
+            <option value="jovenes">Jóvenes</option>
+            <option value="adultos">Adultos</option>
           </select>
-          
-          {/* Mensaje de ayuda si no hay roles */}
-          {!cargandoRoles && roles.length === 0 && (
-            <small style={{ color: 'red', display: 'block', marginTop: '-10px', marginBottom: '10px' }}>
-              ⚠️ Verifica que Laravel esté corriendo en http://localhost:8000
-            </small>
-          )}
 
-          <input
-            type="email"
-            name="email"
-            placeholder="Correo electrónico"
-            value={formData.email}
-            onChange={handleChange}
-          />
+          <select name="horario" value={formData.horario} onChange={handleChange}>
+            <option value="">Seleccione horario</option>
+            <option value="mañana">Mañana (08h00 - 10h00)</option>
+            <option value="tarde">Tarde (14h00 - 16h00)</option>
+            <option value="noche">Noche (18h00 - 20h00)</option>
+          </select>
 
-          <input
-            type="text"
-            name="telefono"
-            placeholder="Teléfono"
-            value={formData.telefono}
-            onChange={handleChange}
-          />
+          <input type="email" name="email" placeholder="Correo electrónico" value={formData.email} onChange={handleChange} />
+          <input type="text" name="telefono" placeholder="Teléfono" value={formData.telefono} onChange={handleChange} />
+          <input type="text" name="direccion" placeholder="Dirección" value={formData.direccion} onChange={handleChange} />
+          <input type="password" name="password" placeholder="Contraseña" value={formData.password} onChange={handleChange} />
+          <input type="password" name="password_confirmation" placeholder="Confirmar contraseña" value={formData.password_confirmation} onChange={handleChange} />
 
-          <input
-            type="text"
-            name="direccion"
-            placeholder="Dirección"
-            value={formData.direccion}
-            onChange={handleChange}
-          />
+          {/* 🔘 BOTONES */}
+          <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+            <button
+              type="button"
+              className="botones secundario"
+              onClick={handleRegresar}
+            >
+              ⬅ Regresar
+            </button>
 
-          <input
-            type="password"
-            name="password"
-            placeholder="Contraseña"
-            value={formData.password}
-            onChange={handleChange}
-          />
-
-          <input
-            type="password"
-            name="password_confirmation"
-            placeholder="Confirmar contraseña"
-            value={formData.password_confirmation}
-            onChange={handleChange}
-          />
-
-          <button type="submit" className="botones" disabled={cargando}>
-            {cargando ? "Registrando..." : "Registrarse"}
-          </button>
+            <button type="submit" className="botones" disabled={cargando}>
+              {cargando ? "Registrando..." : "Registrarse"}
+            </button>
+          </div>
         </form>
-        
-        {/* Indicador de estado del servidor */}
-        <div style={{ marginTop: '20px', fontSize: '12px', color: '#666' }}>
-          Estado: {cargandoRoles ? '🔄 Cargando...' : roles.length > 0 ? '✅ Conectado' : '❌ Desconectado'}
-        </div>
       </div>
 
       <div className="login-right">
