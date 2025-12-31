@@ -7,21 +7,32 @@ use Illuminate\Http\Request;
 
 class NotificacionController extends Controller
 {
-    public function index(Request $request)
-    {
-        $query = Notificacion::where('usuario_id', auth()->id());
-
-        if ($request->has('leida')) {
-            $query->where('leida', $request->leida);
-        }
-
-        if ($request->has('tipo')) {
-            $query->where('tipo', $request->tipo);
-        }
-
-        $notificaciones = $query->orderBy('created_at', 'desc')->paginate(20);
-        return response()->json($notificaciones);
+   public function index(Request $request)
+{
+    // Agrega logs para debug
+    \Log::info('Notificaciones index - Usuario ID: ' . auth()->id());
+    \Log::info('Parámetros recibidos: ', $request->all());
+    
+    $query = Notificacion::where('usuario_id', auth()->id());
+    
+    if ($request->has('leida')) {
+        $query->where('leida', $request->leida);
     }
+    
+    if ($request->has('tipo')) {
+        $query->where('tipo', $request->tipo);
+    }
+    
+    // Verifica el conteo total
+    $total = $query->count();
+    \Log::info('Total de notificaciones para este usuario: ' . $total);
+    
+    $notificaciones = $query->orderBy('created_at', 'desc')->paginate(20);
+    
+    \Log::info('Notificaciones paginadas: ' . $notificaciones->count());
+    
+    return response()->json($notificaciones);
+}
 
     public function store(Request $request)
     {

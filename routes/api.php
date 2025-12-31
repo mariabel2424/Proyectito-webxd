@@ -18,6 +18,10 @@ use App\Http\Controllers\API\Deportistas\DeportistaController;
 use App\Http\Controllers\API\Deportistas\CategoriaController;
 use App\Http\Controllers\API\Deportistas\AsistenciaController;
 use App\Http\Controllers\API\Deportistas\DeportistaTutorController;
+use App\Http\Controllers\API\Deportistas\TutorController as TutoresTutorController;
+use App\Http\Controllers\API\Deportistas\InstructorController as InstructoresInstructorController;
+use App\Http\Controllers\API\Deportistas\InstructorGrupoController as InstructoresInstructorGrupoController;
+
 
 use App\Http\Controllers\API\Clubes\ClubController;
 use App\Http\Controllers\API\Clubes\CampeonatoController;
@@ -32,16 +36,15 @@ use App\Http\Controllers\API\Finanzas\PagoController;
 
 use App\Http\Controllers\API\Instalaciones\EscenarioController;
 use App\Http\Controllers\API\Instalaciones\ActividadController;
-use App\Http\Controllers\API\Instructores\InstructorController as InstructoresInstructorController;
-use App\Http\Controllers\API\Instructores\InstructorGrupoController as InstructoresInstructorGrupoController;
+
 use App\Http\Controllers\API\Sistema\NotificacionController;
 use App\Http\Controllers\API\Sistema\ArchivoController;
 use App\Http\Controllers\API\Sistema\ConfiguracionController;
 use App\Http\Controllers\API\Sistema\DashboardController;
-use App\Http\Controllers\API\Tutores\TutorController as TutoresTutorController;
 
 
 
+ 
 /*
 |--------------------------------------------------------------------------
 | API Routes - Rutas Públicas
@@ -104,11 +107,18 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('permisos', PermisoController::class);
     Route::get('permisos/modulos/lista', [PermisoController::class, 'modulos']);
     
-    // Deportistas
     Route::apiResource('deportistas', DeportistaController::class);
-    Route::get('deportistas/{id}/estadisticas', [DeportistaController::class, 'estadisticas']);
-    Route::get('deportistas/{id}/lesiones', [DeportistaController::class, 'lesiones']);
-    Route::get('deportistas/{id}/club-actual', [DeportistaController::class, 'clubActual']);
+    
+    // Rutas adicionales para deportistas
+    Route::post('deportistas/{deportista}/cambiar-estado', [DeportistaController::class, 'cambiarEstado']);
+    Route::post('deportistas/{deportista}/restaurar', [DeportistaController::class, 'restaurar']);
+    Route::get('deportistas/estadisticas/generales', [DeportistaController::class, 'estadisticas']);
+    Route::get('deportistas/activos/listar', [DeportistaController::class, 'activos']);
+    
+    // Filtros específicos
+    Route::get('deportistas/estado/{estado}', [DeportistaController::class, 'porEstado']);
+    Route::get('deportistas/categoria/{categoriaId}', [DeportistaController::class, 'porCategoria']);
+
     
     // Categorías
     Route::apiResource('categorias', CategoriaController::class);

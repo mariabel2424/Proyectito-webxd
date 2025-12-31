@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,7 +12,7 @@ class Deportista extends Model
 
     protected $table = 'deportistas';
     protected $primaryKey = 'id_deportista';
-    
+
     protected $fillable = [
         'id_usuario',
         'id_categoria',
@@ -42,7 +43,15 @@ class Deportista extends Model
         'fecha_nacimiento' => 'date',
         'altura' => 'decimal:2',
         'peso' => 'decimal:2',
-        'numero_camiseta' => 'integer'
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime'
+    ];
+
+    protected $appends = ['nombre_completo', 'edad', 'imc'];
+
+    protected $attributes = [
+        'estado' => 'activo'
     ];
 
     // Relaciones
@@ -56,72 +65,71 @@ class Deportista extends Model
         return $this->belongsTo(Categoria::class, 'id_categoria', 'id_categoria');
     }
 
-    public function posiciones()
+    public function creador()
     {
-        return $this->belongsToMany(Posicion::class, 'deportista_posiciones', 'id_deportista', 'id_posicion')
-                    ->withPivot('principal')
-                    ->withTimestamps();
+        return $this->belongsTo(Usuario::class, 'created_by', 'id_usuario');
     }
 
-    public function jugadorClubes()
+    public function actualizador()
     {
-        return $this->hasMany(JugadorClub::class, 'id_deportista', 'id_deportista');
+        return $this->belongsTo(Usuario::class, 'updated_by', 'id_usuario');
     }
 
-    public function clubes()
+    // Scopes
+    public function scopeActivos($query)
     {
-        return $this->belongsToMany(Club::class, 'jugador_clubes', 'id_deportista', 'id_club')
-                    ->withPivot('fecha_ingreso', 'fecha_salida', 'estado', 'numero_camiseta', 'observaciones')
-                    ->withTimestamps();
+        return $query->where('estado', 'activo');
     }
 
-    public function facturas()
+    public function scopeLesionados($query)
     {
-        return $this->hasMany(Factura::class, 'id_deportista', 'id_deportista');
+        return $query->where('estado', 'lesionado');
     }
 
-    public function asistencias()
+    public function scopeSuspendidos($query)
     {
-        return $this->hasMany(Asistencia::class, 'id_deportista', 'id_deportista');
+        return $query->where('estado', 'suspendido');
     }
 
-    public function lesiones()
+    public function scopeRetirados($query)
     {
-        return $this->hasMany(Lesion::class, 'id_deportista', 'id_deportista');
+        return $query->where('estado', 'retirado');
     }
 
-    public function estadisticas()
+    public function scopePorCategoria($query, $categoriaId)
     {
-        return $this->hasMany(EstadisticaJugador::class, 'id_deportista', 'id_deportista');
+        return $query->where('id_categoria', $categoriaId);
     }
 
-    // Métodos auxiliares
-    public function getEdadAttribute()
+    public function scopePorGenero($query, $genero)
     {
-        return $this->fecha_nacimiento->age;
+        return $query->where('genero', $genero);
     }
 
+    // Métodos de ayuda
     public function getNombreCompletoAttribute()
     {
-        return "{$this->nombres} {$this->apellidos}";
+        return $this->nombres . ' ' . $this->apellidos;
     }
 
-    public function posicionPrincipal()
+    public function getEdadAttribute()
     {
-        return $this->posiciones()->wherePivot('principal', true)->first();
+        return $this->fecha_nacimiento ? $this->fecha_nacimiento->age : null;
     }
 
-    public function clubActual()
+    public function getImcAttribute()
     {
-        return $this->jugadorClubes()
-                    ->where('estado', 'activo')
-                    ->whereNull('fecha_salida')
-                    ->with('club')
-                    ->first();
+        if ($this->altura && $this->peso && $this->altura > 0) {
+            return round($this->peso / ($this->altura * $this->altura), 2);
+        }
+        return null;
     }
 
-    public function tienelesionActiva()
+    public function getFotoUrlAttribute()
     {
-        return $this->lesiones()->where('estado', 'activa')->exists();
+        if ($this->foto) {
+            return asset('storage/' . $this->foto);
+        }
+        return null;
     }
 }

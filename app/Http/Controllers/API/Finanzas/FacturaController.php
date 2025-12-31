@@ -11,7 +11,7 @@ class FacturaController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Factura::with('deportista', 'usuario', 'detalles');
+        $query = Factura::with('deportista', 'usuario', 'detalles', 'pagos');
 
         if ($request->has('estado')) {
             $query->where('estado', $request->estado);
@@ -28,6 +28,14 @@ class FacturaController extends Controller
         if ($request->has('fecha_hasta')) {
             $query->whereDate('fecha_emision', '<=', $request->fecha_hasta);
         }
+            // Filtrar por fechas solo si están presentes
+    if ($request->filled('fecha_desde')) {
+        $query->whereDate('fecha_emision', '>=', $request->fecha_desde);
+    }
+    
+    if ($request->filled('fecha_hasta')) {
+        $query->whereDate('fecha_emision', '<=', $request->fecha_hasta);
+    }
 
         $facturas = $query->paginate(15);
         return response()->json($facturas);

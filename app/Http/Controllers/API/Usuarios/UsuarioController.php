@@ -5,11 +5,13 @@ use App\Http\Controllers\Controller;
 use App\Models\Usuario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Rol;
 
 class UsuarioController extends Controller
 {
     public function index(Request $request)
     {
+        
         $query = Usuario::with('rol', 'deportista');
 
         // Filtros opcionales
@@ -44,6 +46,8 @@ class UsuarioController extends Controller
             'telefono' => 'nullable|string|max:20',
             'direccion' => 'nullable|string',
             'password' => 'required|string|min:8|confirmed',
+            ' password_confirmation: form.password_confirmation',
+           
             'avatar' => 'nullable|image|max:2048'
         ]);
 

@@ -1,5 +1,5 @@
 <?php
-namespace App\Http\Controllers\API\Instructores;
+namespace App\Http\Controllers\API\Deportistas; 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 

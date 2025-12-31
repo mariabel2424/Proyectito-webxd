@@ -9,26 +9,62 @@ use Illuminate\Support\Facades\DB;
 
 class PartidoController extends Controller
 {
-    public function index(Request $request)
-    {
-        $query = Partido::with('clubLocal', 'clubVisitante', 'escenario', 'campeonato');
-
-        if ($request->has('estado')) {
-            $query->where('estado', $request->estado);
-        }
-
-        if ($request->has('id_campeonato')) {
-            $query->where('id_campeonato', $request->id_campeonato);
-        }
-
-        if ($request->has('fecha')) {
-            $query->whereDate('fecha', $request->fecha);
-        }
-
-        $partidos = $query->orderBy('fecha', 'desc')->orderBy('hora')->paginate(15);
-        return response()->json($partidos);
+    // app/Http/Controllers/Api/PartidoController.php
+public function index(Request $request)
+{
+    \Log::info('API Partidos - Index llamado', [
+        'user_id' => auth()->id(),
+        'request_params' => $request->all()
+    ]);
+    
+    // Verificar si hay partidos en la base de datos
+    $totalPartidos = Partido::count();
+    \Log::info('Total partidos en BD:', ['count' => $totalPartidos]);
+    
+    // Mostrar consulta SQL para debug
+    \DB::enableQueryLog();
+    
+    $query = Partido::with(['campeonato', 'escenario', 'clubLocal', 'clubVisitante']);
+    
+    // Aplicar filtros
+    if ($request->filled('search')) {
+        $query->where(function($q) use ($request) {
+            $q->where('arbitro', 'like', '%' . $request->search . '%')
+              ->orWhereHas('clubLocal', function($q) use ($request) {
+                  $q->where('nombre', 'like', '%' . $request->search . '%');
+              })
+              ->orWhereHas('clubVisitante', function($q) use ($request) {
+                  $q->where('nombre', 'like', '%' . $request->search . '%');
+              });
+        });
     }
-
+    
+    if ($request->filled('estado') && $request->estado !== 'all') {
+        $query->where('estado', $request->estado);
+    }
+    
+    if ($request->filled('id_campeonato') && $request->id_campeonato !== 'all') {
+        $query->where('id_campeonato', $request->id_campeonato);
+    }
+    
+    if ($request->filled('fecha')) {
+        $query->whereDate('fecha', $request->fecha);
+    }
+    
+    $partidos = $query->orderBy('fecha', 'asc')
+                      ->orderBy('hora', 'asc')
+                      ->paginate($request->per_page ?? 15);
+    
+    \Log::info('Queries ejecutadas:', \DB::getQueryLog());
+    \Log::info('Resultados:', [
+        'total' => $partidos->total(),
+        'per_page' => $partidos->perPage(),
+        'current_page' => $partidos->currentPage(),
+        'data_count' => count($partidos->items())
+    ]);
+    
+    return response()->json($partidos);
+}
     public function store(Request $request)
     {
         $request->validate([
