@@ -35,6 +35,11 @@ import RecepcionistaDashboard from './Pages/Recepcionista/Dashboard';
 import InstructorDashboard from './Pages/Instructor/Dashboard';
 import Login from './Pages/Login';
 import Register from './Pages/Register';
+   
+import RecuperarContrasena from './Pages/recuperarcontrasena';
+import ReestablecerContrasena from './Pages/reestablecercontrasena';
+
+
 
 ReactDOM.createRoot(document.getElementById("react-root")).render(
   <React.StrictMode>
@@ -76,6 +81,13 @@ ReactDOM.createRoot(document.getElementById("react-root")).render(
         <Route path="/tutor/dashboard" element={<TutorDashboard />} />
         <Route path="/recepcionista/dashboard" element={<RecepcionistaDashboard />} />
         <Route path="/instructor/dashboard" element={<InstructorDashboard />} />
+
+       <Route path="/recuperar-contrasena" element={<RecuperarContrasena />} />
+      <Route path="/reestablecer-contrasena" element={<ReestablecerContrasena />} />
+
+
+
+
         {/* Añade otras rutas según sea necesario */}
       </Routes>
     </BrowserRouter>
