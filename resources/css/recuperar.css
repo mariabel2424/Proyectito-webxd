@@ -1,174 +1,275 @@
 * {
   box-sizing: border-box;
   font-family: "Poppins", sans-serif;
+  margin: 0;
+  padding: 0;
 }
 
-/* Fondo general pastel */
+/* IMPORTANTE: Elimina márgenes del body y html */
+body, html {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+}
+
+#root {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* Fondo general con colores de Montecristi - Rojo y Verde suaves */
 .recuperar-page {
-  height: 100vh;
+  min-height: 100vh;
+  width: 100vw;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #a0c4ff; /* Fondo suave */
+  background: linear-gradient(135deg, #ffcdd2 0%, #c8e6c9 50%, #fff9c4 100%);
   padding: 20px;
+  margin: 0 !important;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
-/* Contenedor del formulario */
+/* Contenedor del formulario con diseño más moderno */
 .recuperar-container {
-  position: relative; /* para posicionar la X dentro del recuadro */
-  background: #ffffff;
-  padding: 38px 32px;
-  border-radius: 18px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  position: relative;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 40px 35px;
+  border-radius: 24px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
   width: 100%;
-  max-width: 400px;
+  max-width: 440px;
   text-align: left;
-
-  /* En vez de una línea vertical, borde azul alrededor del recuadro */
-  border: 4px solid #1d4ed8;
+  border: 3px solid rgba(255, 255, 255, 0.6);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Botón X arriba a la derecha */
+.recuperar-container:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+}
+
+/* Botón X con mejor diseño */
 .close-button {
-  position: absolute; /* se posiciona relativo a .recuperar-container */
-  top: 10px;
-  right: 10px;
-  width: 30px;
-  height: 30px;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 35px;
+  height: 35px;
   border-radius: 50%;
   border: none;
-  background: #e0ecff;
-  color: #1e3a8a;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #ffffff;
   font-size: 18px;
   font-weight: 700;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+  transition: all 0.3s ease;
 }
 
 .close-button:hover {
-  background: #c7d8ff;
-  color: #111827;
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  transform: rotate(90deg) scale(1.1);
+  box-shadow: 0 6px 15px rgba(102, 126, 234, 0.4);
 }
 
-/* Título */
+/* Título mejorado */
 .recuperar-container h2 {
-  color: #1d4ed8;
-  font-size: 24px;
-  margin-bottom: 18px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 28px;
+  margin-bottom: 24px;
   text-align: center;
   font-weight: 700;
+  letter-spacing: -0.5px;
 }
 
-/* Mensajes */
+/* Mensajes con mejor diseño */
 .mensaje-ok {
-  background-color: #e3fcef;
+  background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%);
   color: #166534;
-  border-radius: 8px;
-  padding: 10px 12px;
-  margin-bottom: 14px;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 18px;
   font-size: 14px;
+  font-weight: 500;
+  border-left: 4px solid #10b981;
+  box-shadow: 0 4px 10px rgba(16, 185, 129, 0.15);
 }
 
 .alert {
-  background-color: #fdecea;
+  background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%);
   color: #b91c1c;
-  border-radius: 8px;
-  padding: 10px 12px;
-  margin-bottom: 14px;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 18px;
   font-size: 14px;
+  font-weight: 500;
+  border-left: 4px solid #ef4444;
+  box-shadow: 0 4px 10px rgba(239, 68, 68, 0.15);
 }
 
 .alert ul {
+  margin: 0;
   margin-left: 18px;
+  padding: 0;
 }
 
-/* Etiquetas e inputs */
+/* Etiquetas e inputs mejorados */
 .recuperar-container label {
   display: block;
   text-align: left;
   font-weight: 600;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
   font-size: 14px;
+  color: #374151;
 }
 
 .recuperar-container input[type="email"] {
   width: 100%;
-  padding: 11px 12px;
-  border-radius: 10px;
-  border: 1px solid #cbd5e1;
-  margin-bottom: 18px;
-  font-size: 14px;
-  background-color: #f7f8fc;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 2px solid #e5e7eb;
+  margin-bottom: 22px;
+  font-size: 15px;
+  background-color: #f9fafb;
   transition: all 0.3s ease;
 }
 
 .recuperar-container input:focus {
-  border-color: #1d4ed8;
-  box-shadow: 0 0 6px rgba(29, 78, 216, 0.3);
+  border-color: #667eea;
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
   outline: none;
   background-color: #ffffff;
+  transform: translateY(-1px);
 }
 
 .recuperar-container input:disabled {
-  opacity: 0.8;
+  opacity: 0.6;
   cursor: not-allowed;
+  background-color: #f3f4f6;
 }
 
-/* Botón */
+/* Botón con gradiente */
 .recuperar-container button[type="submit"] {
   width: 100%;
-  padding: 12px;
-  background-color: #1d4ed8;
+  padding: 14px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: #fff;
   border: none;
-  border-radius: 10px;
-  font-size: 15px;
+  border-radius: 12px;
+  font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: 0.25s;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .recuperar-container button[type="submit"]:hover:not(:disabled) {
-  background-color: #1e40af;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 10px rgba(30, 64, 175, 0.35);
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.recuperar-container button[type="submit"]:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
 }
 
 .recuperar-container button[type="submit"]:disabled {
-  opacity: 0.7;
+  opacity: 0.6;
   cursor: not-allowed;
-  box-shadow: none;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+  transform: none;
 }
 
-/* Links */
+/* Links mejorados */
 .info-link {
-  margin-top: 12px;
+  margin-top: 16px;
   font-size: 14px;
   text-align: center;
+  color: #6b7280;
 }
 
 .info-link a {
-  color: #1d4ed8;
+  color: #667eea;
   text-decoration: none;
-  font-weight: 500;
-  transition: color 0.2s ease;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.info-link a::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -2px;
+  left: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
 }
 
 .info-link a:hover {
-  text-decoration: underline;
-  color: #1e40af;
+  color: #764ba2;
 }
 
-/* Responsive */
+.info-link a:hover::after {
+  width: 100%;
+}
+
+/* Responsive mejorado */
 @media (max-width: 480px) {
+  .recuperar-page {
+    padding: 15px;
+  }
+
   .recuperar-container {
-    padding: 28px 20px;
+    padding: 32px 24px;
+    max-width: 100%;
   }
 
   .recuperar-container h2 {
-    font-size: 22px;
+    font-size: 24px;
   }
+
+  .close-button {
+    width: 32px;
+    height: 32px;
+    top: 12px;
+    right: 12px;
+  }
+}
+
+/* Animación de entrada suave */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.recuperar-container {
+  animation: fadeInUp 0.5s ease-out;
 }
