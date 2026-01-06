@@ -40,6 +40,7 @@
   --transition-slow: all 0.3s ease-in-out;
   
   --sidebar-width: 250px;
+  --topbar-height: 64px; 
 }
 
 /* ================= RESET Y BASE ================= */
@@ -58,15 +59,16 @@ body {
 
 /* ================= LAYOUT PRINCIPAL ================= */
 .usuario-container {
-  display: flex;
-  min-height: 100vh;
+  height: 80vh;
+  width: 1200px;
+  margin-left: 250px;
   background-color: var(--gray-50);
 }
 
 .usuario-content {
   flex: 1;
-  margin-left: var(--sidebar-width);
-  min-height: 100vh;
+/* 👈 deja espacio para el topbar */
+  min-height: calc(100vh - var(--topbar-height));
   display: flex;
   flex-direction: column;
   background-color: var(--gray-50);

@@ -2,15 +2,16 @@
 
 /* Contenedor principal */
 .deportista-container {
-  display: flex;
-  min-height: 100vh;
+  height: 80vh;
+  width: 1300px;
   background-color: #f8fafc;
 }
 
 .deportista-content {
   flex: 1;
+  margin-left: 150px;
   padding: 1.5rem;
-  overflow-x: hidden;
+  width: 95%;
 }
 
 /* Header */
@@ -43,6 +44,7 @@
   display: flex;
   gap: 0.75rem;
   flex-shrink: 0;
+  margin-right: 70px;
 }
 
 /* Botones generales */

@@ -249,6 +249,7 @@
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   gap: 24px;
   margin-bottom: 24px;
+  margin-top: 400px;
 }
 
 .dashboard-card {

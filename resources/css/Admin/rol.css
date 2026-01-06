@@ -40,8 +40,8 @@
 
 /* ================= CONTENEDOR PRINCIPAL ================= */
 .rol-container {
-  display: flex;
-  min-height: 100vh;
+  height: 80vh;
+  width: 1500px;
   background-color: var(--gray-100);
 }
 

@@ -538,6 +538,7 @@ const Usuario = () => {
         {/* TOPBAR */}
         <Topbar />
         {/* HEADER */}
+        <div className="usuario-main">
         <div className="usuario-header">
           <div>
             
@@ -1384,6 +1385,7 @@ const Usuario = () => {
             </div>
           </div>
         )}
+        </div>
       </div>
     </div>
   );

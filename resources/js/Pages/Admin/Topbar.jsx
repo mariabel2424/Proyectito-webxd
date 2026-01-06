@@ -68,6 +68,13 @@ const Topbar = ({ title = "Dashboard", showMenuButton = false, onMenuClick }) =>
         }
     };
 
+    const getUserInitials = () => {
+        if (!user) return 'U';
+        const nombre = user.nombre?.charAt(0) || '';
+        const apellido = user.apellido?.charAt(0) || '';
+        return `${nombre}${apellido}`.toUpperCase();
+    };
+
     if (loading) {
         return (
             <header className="topbar loading">
@@ -109,7 +116,7 @@ const Topbar = ({ title = "Dashboard", showMenuButton = false, onMenuClick }) =>
                 
                 <div className="user-info">
                     <div className="user-avatar">
-                        
+                        {getUserInitials()}
                     </div>
                     <div className="user-details">
                         <span className="user-name">

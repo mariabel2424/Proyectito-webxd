@@ -74,17 +74,15 @@ body {
 
 /* ================= CONTENEDOR PRINCIPAL MEJORADO ================= */
 .permiso-container {
-  display: flex;
-  min-height: 100vh;
-  width: 100%;
-  overflow-x: hidden;
+  height: 80vh;
+  width: 1400px;
 }
 
 .permiso-content {
   flex: 1;
   padding: 1.5rem;
   margin-left: 0;
-  width: 100%;
+  width: 85%;
   max-width: 100%;
   overflow-x: hidden;
   background: transparent;
