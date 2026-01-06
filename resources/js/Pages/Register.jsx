@@ -719,7 +719,7 @@ export default function Register() {
               <p>N° Cuenta: 1234567890</p>
               <p>Tipo: Ahorros</p>
               <p>Nombre: Liga Cantonal Montecristi</p>
-              <p className="nota">* Podrá subir el comprobante posteriormente desde su perfil.</p>
+              <p className="nota">* Podrá subir el comprobante despues de haber hecho la transferencia</p>
             </div>
           )}
 
