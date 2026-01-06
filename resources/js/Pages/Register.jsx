@@ -16,11 +16,13 @@ export default function Register() {
     password_confirmation: "",
   });
 
+  const [pagoRealizado, setPagoRealizado] = useState("");
+  const [comprobante, setComprobante] = useState(null);
+
   const [mensaje, setMensaje] = useState("");
   const [errores, setErrores] = useState([]);
   const [cargando, setCargando] = useState(false);
 
-  // 🔙 FUNCIÓN REGRESAR
   const handleRegresar = () => {
     window.history.back();
   };
@@ -51,6 +53,12 @@ export default function Register() {
     if (formData.password !== formData.password_confirmation)
       nuevosErrores.push("Las contraseñas no coinciden.");
 
+    if (!pagoRealizado)
+      nuevosErrores.push("Debe indicar si realizó el pago.");
+
+    if (pagoRealizado === "si" && !comprobante)
+      nuevosErrores.push("Debe adjuntar el comprobante de pago.");
+
     if (nuevosErrores.length > 0) {
       setErrores(nuevosErrores);
       return;
@@ -61,13 +69,21 @@ export default function Register() {
     setMensaje("");
 
     try {
+      const formDataToSend = new FormData();
+
+      for (const key in formData) {
+        formDataToSend.append(key, formData[key]);
+      }
+
+      formDataToSend.append("pago_realizado", pagoRealizado);
+
+      if (comprobante) {
+        formDataToSend.append("comprobante", comprobante);
+      }
+
       const response = await fetch("http://localhost:8000/api/register", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify(formData),
+        body: formDataToSend,
       });
 
       const data = await response.json();
@@ -98,6 +114,9 @@ export default function Register() {
           password_confirmation: "",
         });
 
+        setPagoRealizado("");
+        setComprobante(null);
+
         setTimeout(() => {
           window.location.href = "/login";
         }, 2000);
@@ -113,9 +132,10 @@ export default function Register() {
   return (
     <div className="login-horizontal-container">
       <div className="login-left">
-        <h2>Registrarse</h2>
+        <h2>Registro al Curso</h2>
 
         {mensaje && <p className="mensaje">{mensaje}</p>}
+
         {errores.length > 0 && (
           <div className="alert">
             <ul>
@@ -126,7 +146,8 @@ export default function Register() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} encType="multipart/form-data">
+
           <input type="text" name="nombre" placeholder="Nombre" value={formData.nombre} onChange={handleChange} />
           <input type="text" name="apellido" placeholder="Apellido" value={formData.apellido} onChange={handleChange} />
           <input type="text" name="cedula" placeholder="Cédula" value={formData.cedula} onChange={handleChange} />
@@ -151,13 +172,36 @@ export default function Register() {
           <input type="password" name="password" placeholder="Contraseña" value={formData.password} onChange={handleChange} />
           <input type="password" name="password_confirmation" placeholder="Confirmar contraseña" value={formData.password_confirmation} onChange={handleChange} />
 
-          {/* 🔘 BOTONES */}
+          {/* 💳 PAGO */}
+          <select value={pagoRealizado} onChange={(e) => setPagoRealizado(e.target.value)}>
+            <option value="">¿Ha realizado el pago?</option>
+            <option value="si">Sí, ya pagué</option>
+            <option value="no">No, aún no he pagado</option>
+          </select>
+
+          {pagoRealizado === "no" && (
+            <div className="info-pago">
+              <p><strong>Datos para realizar el pago:</strong></p>
+              <p>Banco: Banco Pichincha</p>
+              <p>N° Cuenta: 1234567890</p>
+              <p>Tipo: Ahorros</p>
+              <p>Nombre: Liga Cantonal Montecristi</p>
+            </div>
+          )}
+
+          {pagoRealizado === "si" && (
+            <div>
+              <label>Adjuntar comprobante de pago:</label>
+              <input
+                type="file"
+                accept="image/*,.pdf"
+                onChange={(e) => setComprobante(e.target.files[0])}
+              />
+            </div>
+          )}
+
           <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
-            <button
-              type="button"
-              className="botones secundario"
-              onClick={handleRegresar}
-            >
+            <button type="button" className="botones secundario" onClick={handleRegresar}>
               ⬅ Regresar
             </button>
 
@@ -165,6 +209,7 @@ export default function Register() {
               {cargando ? "Registrando..." : "Registrarse"}
             </button>
           </div>
+
         </form>
       </div>
 
