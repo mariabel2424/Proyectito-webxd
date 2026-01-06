@@ -5,7 +5,7 @@
       <div class="container-fluid">
         <nav class="navbar navbar-expand-lg custom_nav-container fixed-top">
           <a class="navbar-brand" href="index.html">
-            <img src="{{ asset('assets/front/assets/images/logo.png') }}" alt="">
+            <img src="{{ asset('assets/front/assets/images/Logo.png') }}" alt="">
             <span>
               Cursos Vacacionales 
             </span>
