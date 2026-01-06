@@ -18,43 +18,16 @@ body {
   width: 950px;
   max-width: 95%;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
-  position: relative;
   animation: fadeIn 0.5s ease;
 }
 
-/* ===== Animación de aparición ===== */
+/* ===== Animación ===== */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(20px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ===== Botón de cierre ===== */
-.close-button {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  width: 36px;
-  height: 36px;
-  border-radius: 12px;
-  border: none;
-  background: rgba(255, 255, 255, 0.8);
-  color: #4b4f62;
-  font-size: 18px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(4px);
-  transition: 0.25s;
-}
-
-.close-button:hover {
-  background: #fff;
-  color: #222;
-  transform: scale(1.08);
-}
-
-/* ===== Lado izquierdo (formulario) ===== */
+/* ===== Lado izquierdo ===== */
 .login-left {
   flex: 1;
   padding: 50px 45px;
@@ -72,12 +45,12 @@ body {
   font-weight: 700;
 }
 
-/* ===== Inputs modernos ===== */
+/* ===== Inputs y selects ===== */
 .login-left input,
 .login-left select {
   width: 100%;
   padding: 12px;
-  margin-bottom: 18px;
+  margin-bottom: 16px;
   border: 1.6px solid #d7d9e4;
   border-radius: 10px;
   outline: none;
@@ -92,14 +65,48 @@ body {
   box-shadow: 0 0 0 3px rgba(100, 150, 220, 0.25);
 }
 
-/* ===== Botones ===== */
-.botones {
-  display: flex;
-  gap: 12px;
-  margin-top: 15px;
+/* ===== Input file ===== */
+.login-left input[type="file"] {
+  padding: 10px;
+  background: #f5f7fb;
+  border-style: dashed;
+  cursor: pointer;
 }
 
-.botones button {
+/* ===== Bloque info pago ===== */
+.info-pago {
+  background: linear-gradient(135deg, #eef2ff, #f7f5ff);
+  border-left: 5px solid #8b8df2;
+  padding: 14px 16px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  color: #2f3550;
+}
+
+.info-pago p {
+  margin: 4px 0;
+}
+
+/* ===== Mensajes ===== */
+.mensaje {
+  margin-bottom: 12px;
+  text-align: center;
+  color: #3b6ca8;
+  font-weight: 600;
+}
+
+.alert {
+  background-color: #ffe5e8;
+  color: #a72c3e;
+  padding: 12px 16px;
+  border-radius: 10px;
+  margin-bottom: 14px;
+  font-size: 14px;
+}
+
+/* ===== Botones ===== */
+.botones {
   flex: 1;
   padding: 13px;
   font-size: 16px;
@@ -113,63 +120,29 @@ body {
   box-shadow: 0 4px 15px rgba(150, 100, 200, 0.25);
 }
 
-.botones button:hover {
+.botones:hover {
   transform: translateY(-2px);
   background: linear-gradient(135deg, #b16ac2, #8753c4);
 }
 
-/* ===== Checkbox ===== */
-.checkbox-terminos {
-  margin: 12px 0;
-  font-size: 14px;
-  color: #2f3550;
-  display: flex;
-  align-items: center;
+.botones:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
 }
 
-.checkbox-terminos input {
-  margin-right: 10px;
-  transform: scale(1.2);
+/* ===== Botón secundario ===== */
+.botones.secundario {
+  background: linear-gradient(135deg, #d1d5db, #bfc3cc);
+  color: #2b2d42;
+  box-shadow: none;
 }
 
-/* ===== Mensajes ===== */
-.mensaje {
-  margin-top: 15px;
-  text-align: center;
-  color: #4b6783;
-  font-weight: 600;
-  font-size: 15px;
+.botones.secundario:hover {
+  background: linear-gradient(135deg, #c4c8d0, #aeb3bd);
 }
 
-.alert {
-  background-color: #ffe5e8;
-  color: #a72c3e;
-  padding: 12px 16px;
-  border-radius: 8px;
-  margin-bottom: 12px;
-  font-weight: 500;
-}
-
-/* ===== Links ===== */
-.links {
-  margin-top: 20px;
-  text-align: center;
-}
-
-.links a {
-  color: #6b70c9;
-  font-weight: 500;
-  text-decoration: none;
-  transition: 0.2s ease;
-}
-
-.links a:hover {
-  color: #5056ad;
-  text-decoration: underline;
-  transform: scale(1.04);
-}
-
-/* ===== Lado derecho (imagen) ===== */
+/* ===== Lado derecho ===== */
 .login-right {
   flex: 1;
   background: linear-gradient(135deg, #cbc5ff, #d9caef);
@@ -215,13 +188,4 @@ body {
   .login-right {
     display: none;
   }
-}
-
-.botones.secundario {
-  background-color: #cfcfcf;
-  color: #333;
-}
-
-.botones.secundario:hover {
-  background-color: #b8b8b8;
 }
