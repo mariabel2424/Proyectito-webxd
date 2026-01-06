@@ -183,7 +183,7 @@ export default function Login() {
 
         <div className="links">
           <a href="/recuperar-contrasena">¿Olvidaste tu contraseña?</a><br />
-          <a href="/register">Registrarse</a>
+         
         </div>
       </div>
 
