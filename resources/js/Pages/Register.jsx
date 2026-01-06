@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import "../../css/register.css";
 
@@ -548,15 +549,21 @@ export default function Register() {
             )}
           </div>
 
-          <input
-            type="date"
-            name="fecha_nacimiento"
-            placeholder="Fecha de Nacimiento *"
-            value={formData.fecha_nacimiento}
-            onChange={handleChange}
-            max={new Date().toISOString().split('T')[0]}
-            required
-          />
+          <div className="input-group">
+  <label htmlFor="fecha_nacimiento" className="input-label">
+    Fecha de nacimiento *
+  </label>
+  <input
+    type="date"
+    id="fecha_nacimiento"
+    name="fecha_nacimiento"
+    value={formData.fecha_nacimiento}
+    onChange={handleChange}
+    max={new Date().toISOString().split('T')[0]}
+    required
+  />
+</div>
+
 
           <select
             name="genero"
@@ -758,16 +765,20 @@ export default function Register() {
         </form>
       </div>
 
-      <div className="login-right">
+
+ <div className="login-right">
         <img
           src="https://www.teatrocentrodearte.org/images/files/2024/0f2f6cd5-31d9-44e4-9c83-e95bf046cb9d.webp"
           alt="Registro"
         />
+
+     
         <div className="info-text">
           <h1>Bienvenido</h1>
           <p>Regístrate y comienza tu aventura deportiva</p>
         </div>
       </div>
-    </div>
+      </div>
+    
   );
 }
