@@ -52,6 +52,7 @@ use App\Http\Controllers\API\Sistema\DashboardController;
 */
 Route::get('roles', [RolController::class, 'all']);
 Route::post('register', [RegisterController::class, 'register']); 
+
 Route::prefix('auth')->group(function () {
     // Login y Registro
     Route::post('login', [LoginController::class, 'login']);
@@ -65,8 +66,37 @@ Route::prefix('auth')->group(function () {
     // Restablecimiento de Contraseña
     Route::post('solicitar-reset', [PasswordResetController::class, 'solicitarReset']);
     Route::post('verificar-token', [PasswordResetController::class, 'verificarToken']);
-
 });
+
+/*
+|--------------------------------------------------------------------------
+| Rutas Públicas para la Página de Inicio
+|--------------------------------------------------------------------------
+*/
+// Cursos públicos (solo lectura)
+Route::get('cursos', [CursoController::class, 'index']);
+Route::get('cursos/{id}', [CursoController::class, 'show']);
+
+// Partidos públicos (solo lectura)
+Route::get('partidos/proximos/lista', [PartidoController::class, 'proximosPartidos']);
+Route::get('partidos', [PartidoController::class, 'index']);
+Route::get('partidos/{id}', [PartidoController::class, 'show']);
+
+// Campeonatos públicos (solo lectura)
+Route::get('campeonatos', [CampeonatoController::class, 'index']);
+Route::get('campeonatos/{id}', [CampeonatoController::class, 'show']);
+Route::get('campeonatos/{id}/tabla-posiciones', [CampeonatoController::class, 'tablaPosiciones']);
+Route::get('campeonatos/{id}/fixture', [CampeonatoController::class, 'fixture']);
+Route::get('campeonatos/{id}/goleadores', [CampeonatoController::class, 'goleadores']);
+
+// Categorías públicas (solo lectura)
+Route::get('categorias', [CategoriaController::class, 'index']);
+Route::get('categorias/{id}', [CategoriaController::class, 'show']);
+
+// Actividades públicas (solo lectura)
+Route::get('actividades', [ActividadController::class, 'index']);
+Route::get('actividades/calendario/mes', [ActividadController::class, 'calendario']);
+
 /*
 |--------------------------------------------------------------------------
 | API Routes - Rutas Protegidas (Requieren Autenticación)
@@ -76,7 +106,7 @@ Route::prefix('auth')->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
     
 
-        // Auth - Usuario Autenticado
+    // Auth - Usuario Autenticado
     Route::prefix('auth')->group(function () {
         Route::post('logout', [LogoutController::class, 'logout']);
         Route::post('logout-all', [LogoutController::class, 'logoutAll']);
@@ -120,8 +150,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('deportistas/categoria/{categoriaId}', [DeportistaController::class, 'porCategoria']);
 
     
-    // Categorías
-    Route::apiResource('categorias', CategoriaController::class);
+    // Categorías (rutas protegidas de escritura)
+    Route::post('categorias', [CategoriaController::class, 'store']);
+    Route::put('categorias/{id}', [CategoriaController::class, 'update']);
+    Route::delete('categorias/{id}', [CategoriaController::class, 'destroy']);
     Route::get('categorias/{id}/deportistas', [CategoriaController::class, 'deportistas']);
 
     // Tutores
@@ -187,20 +219,22 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('clubes/{id}/agregar-jugador', [ClubController::class, 'agregarJugador']);
     Route::get('clubes/{id}/partidos', [ClubController::class, 'partidos']);
     
-    // Campeonatos
-    Route::apiResource('campeonatos', CampeonatoController::class);
-    Route::get('campeonatos/{id}/tabla-posiciones', [CampeonatoController::class, 'tablaPosiciones']);
+    // Campeonatos (rutas protegidas de escritura)
+    Route::post('campeonatos', [CampeonatoController::class, 'store']);
+    Route::put('campeonatos/{id}', [CampeonatoController::class, 'update']);
+    Route::delete('campeonatos/{id}', [CampeonatoController::class, 'destroy']);
     Route::post('campeonatos/{id}/inscribir-club', [CampeonatoController::class, 'inscribirClub']);
-    Route::get('campeonatos/{id}/fixture', [CampeonatoController::class, 'fixture']);
-    Route::get('campeonatos/{id}/goleadores', [CampeonatoController::class, 'goleadores']);
     
-    // Partidos
-    Route::apiResource('partidos', PartidoController::class);
+    // Partidos (rutas protegidas de escritura)
+    Route::post('partidos', [PartidoController::class, 'store']);
+    Route::put('partidos/{id}', [PartidoController::class, 'update']);
+    Route::delete('partidos/{id}', [PartidoController::class, 'destroy']);
     Route::post('partidos/{id}/finalizar', [PartidoController::class, 'finalizarPartido']);
-    Route::get('partidos/proximos/lista', [PartidoController::class, 'proximosPartidos']);
     
-    // Cursos
-    Route::apiResource('cursos', CursoController::class);
+    // Cursos (rutas protegidas de escritura)
+    Route::post('cursos', [CursoController::class, 'store']);
+    Route::put('cursos/{id}', [CursoController::class, 'update']);
+    Route::delete('cursos/{id}', [CursoController::class, 'destroy']);
     Route::post('cursos/{id}/inscribir', [CursoController::class, 'inscribir']);
     Route::get('cursos/{id}/participantes', [CursoController::class, 'participantes']);
     
@@ -222,11 +256,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('escenarios', EscenarioController::class);
     Route::get('escenarios/{id}/disponibilidad', [EscenarioController::class, 'disponibilidad']);
     
-    // Actividades
-    Route::apiResource('actividades', ActividadController::class);
+    // Actividades (rutas protegidas de escritura)
+    Route::post('actividades', [ActividadController::class, 'store']);
+    Route::put('actividades/{id}', [ActividadController::class, 'update']);
+    Route::delete('actividades/{id}', [ActividadController::class, 'destroy']);
     Route::post('actividades/{id}/registrar-asistencia', [ActividadController::class, 'registrarAsistencia']);
     Route::get('actividades/{id}/lista-asistencia', [ActividadController::class, 'listaAsistencia']);
-    Route::get('actividades/calendario/mes', [ActividadController::class, 'calendario']);
     
     // Notificaciones
     Route::apiResource('notificaciones', NotificacionController::class)->except(['update']);
