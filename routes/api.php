@@ -237,6 +237,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('cursos/{id}', [CursoController::class, 'destroy']);
     Route::post('cursos/{id}/inscribir', [CursoController::class, 'inscribir']);
     Route::get('cursos/{id}/participantes', [CursoController::class, 'participantes']);
+        Route::get('cursos-abiertos', [CursoController::class, 'cursosAbiertos']);
     
     // Inscripciones a Cursos
     Route::apiResource('inscripciones-curso', InscripcionCursoController::class);

@@ -5,7 +5,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 // Importación de las rutas
 import FinanzasDashboard from './Pages/Financiero/Dashboard';
 import EntrenadorDashboard from './Pages/Entrenador/Dashboard';
-import DeportistaDashboard from './Pages/Deportista/Dashboard';
+
 //admin
 import AdminDashboard from './Pages/Admin/Dashboard';
 import AdminUser from './Pages/Admin/Usuario';
@@ -30,6 +30,14 @@ import AdminNotificacion from './Pages/Admin/Notificacion';
 import AdminArchivo from './Pages/Admin/Archivo';
 import AdminConfiguracion from './Pages/Admin/Configuracion';
 
+//Deportista
+import DeportistaDashboard from './Pages/Deportista/Dashboard';
+import DeportistaPerfil from './Pages/Deportista/Perfil';
+import DeportistaTutor from './Pages/Deportista/Tutor';
+import DeportistaEstadistica from './Pages/Deportista/Estadistica';
+import DeportistaCurso from './Pages/Deportista/Curso';
+import DeportistaInscribir from './Pages/Deportista/InscribirCurso';
+
 import TutorDashboard from './Pages/Tutor/Dashboard';
 import RecepcionistaDashboard from './Pages/Recepcionista/Dashboard';
 import InstructorDashboard from './Pages/Instructor/Dashboard';
@@ -52,6 +60,11 @@ ReactDOM.createRoot(document.getElementById("react-root")).render(
         <Route path="/entrenador/dashboard" element={<EntrenadorDashboard />} />
 
         <Route path="/deportista/dashboard" element={<DeportistaDashboard />} />
+        <Route path="/deportista/perfil" element={<DeportistaPerfil/>}/>
+        <Route path="/deportista/tutores" element={<DeportistaTutor/>}/>
+        <Route path="/deportista/estadisticas" element={<DeportistaEstadistica/>}/>
+        <Route path="/deportista/cursos" element={<DeportistaCurso/>}/>
+        <Route path="/deportista/inscribir" element={<DeportistaInscribir/>}/>
         
         
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
