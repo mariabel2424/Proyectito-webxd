@@ -53,50 +53,104 @@ const InscribirCurso = () => {
   };
 
   // Obtener información del deportista autenticado
-  const obtenerDeportistaInfo = useCallback(async () => {
-    try {
-      const headers = authHeaders();
-      const meResponse = await fetch('/api/auth/me', {
-        headers: headers
-      });
+ // Obtener información del deportista autenticado
+const obtenerDeportistaInfo = useCallback(async () => {
+  try {
+    console.log('=== INICIANDO OBTENER DEPORTISTA INFO ===');
+    const headers = authHeaders();
+    
+    console.log('Realizando petición a /api/auth/me...');
+    const meResponse = await fetch('/api/auth/me', {
+      headers: headers
+    });
 
-      if (!meResponse.ok) {
-        if (meResponse.status === 401) {
-          localStorage.removeItem('token');
-          window.location.href = '/login';
-          return null;
-        }
-        throw new Error(`Error ${meResponse.status}: No se pudo autenticar`);
+    console.log('Status de respuesta:', meResponse.status);
+    
+    if (!meResponse.ok) {
+      console.error('Error en respuesta HTTP:', meResponse.status, meResponse.statusText);
+      if (meResponse.status === 401) {
+        localStorage.removeItem('token');
+        window.location.href = '/login';
+        return null;
       }
-
-      const meData = await parseJSONResponse(meResponse);
-      
-      let deportistaInfo = {
-        id_usuario: null,
-        id_deportista: null,
-        nombre: ''
-      };
-
-      if (meData.user?.deportista?.id_deportista) {
-        deportistaInfo.id_deportista = meData.user.deportista.id_deportista;
-        deportistaInfo.id_usuario = meData.user.id_usuario;
-        deportistaInfo.nombre = meData.user.nombre || '';
-      } else if (meData.user?.id_deportista) {
-        deportistaInfo.id_deportista = meData.user.id_deportista;
-        deportistaInfo.id_usuario = meData.user.id_usuario;
-        deportistaInfo.nombre = meData.user.nombre || '';
-      } else if (meData.deportista?.id_deportista) {
-        deportistaInfo.id_deportista = meData.deportista.id_deportista;
-        deportistaInfo.nombre = meData.deportista.nombre_completo || '';
-      }
-
-      return deportistaInfo;
-    } catch (err) {
-      console.error('Error al obtener información del deportista:', err);
-      return null;
+      throw new Error(`Error ${meResponse.status}: No se pudo autenticar`);
     }
-  }, [authHeaders]);
 
+    const meData = await parseJSONResponse(meResponse);
+    console.log('Datos completos de /api/auth/me:', meData);
+    
+    let deportistaInfo = {
+      id_usuario: null,
+      id_deportista: null,
+      nombre: ''
+    };
+
+    // DEPURACIÓN: Mostrar estructura completa
+    console.log('Estructura de meData:', {
+      tieneUser: !!meData.user,
+      tieneDeportistaEnUser: !!(meData.user?.deportista),
+      tieneIdDeportistaEnUser: !!(meData.user?.id_deportista),
+      tieneDeportistaDirecto: !!meData.deportista
+    });
+
+    // Opción 1: user.deportista
+    if (meData.user?.deportista?.id_deportista) {
+      console.log('Usando estructura: user.deportista');
+      deportistaInfo.id_deportista = meData.user.deportista.id_deportista;
+      deportistaInfo.id_usuario = meData.user.id_usuario;
+      deportistaInfo.nombre = meData.user.nombre || meData.user.deportista.nombres || '';
+    } 
+    // Opción 2: user.id_deportista (directo)
+    else if (meData.user?.id_deportista) {
+      console.log('Usando estructura: user.id_deportista');
+      deportistaInfo.id_deportista = meData.user.id_deportista;
+      deportistaInfo.id_usuario = meData.user.id_usuario;
+      deportistaInfo.nombre = meData.user.nombre || '';
+    } 
+    // Opción 3: deportista directo
+    else if (meData.deportista?.id_deportista) {
+      console.log('Usando estructura: deportista directo');
+      deportistaInfo.id_deportista = meData.deportista.id_deportista;
+      deportistaInfo.nombre = meData.deportista.nombre_completo || meData.deportista.nombres || '';
+      // Intentar obtener id_usuario de alguna manera
+      if (meData.deportista.id_usuario) {
+        deportistaInfo.id_usuario = meData.deportista.id_usuario;
+      }
+    }
+    // Opción 4: user básico
+    else if (meData.user?.id_usuario) {
+      console.log('Usando estructura: user básico');
+      deportistaInfo.id_usuario = meData.user.id_usuario;
+      deportistaInfo.nombre = meData.user.nombre || '';
+      // Si no hay id_deportista, podría estar en otra propiedad
+      if (meData.user.deportista_id) {
+        deportistaInfo.id_deportista = meData.user.deportista_id;
+      }
+    }
+
+    console.log('Información final del deportista:', deportistaInfo);
+    
+    // Validación final
+    if (!deportistaInfo.id_usuario) {
+      console.warn('No se pudo obtener id_usuario. Datos recibidos:', meData);
+      throw new Error('No tienes un perfil de usuario válido asociado.');
+    }
+
+    if (!deportistaInfo.id_deportista) {
+      console.warn('No se pudo obtener id_deportista. Datos recibidos:', meData);
+      // Podríamos permitir esto si el endpoint de inscripción no lo requiere
+      // throw new Error('No tienes un perfil de deportista asociado. Contacta al administrador.');
+    }
+
+    console.log('=== FINALIZANDO OBTENER DEPORTISTA INFO ===');
+    return deportistaInfo;
+    
+  } catch (err) {
+    console.error('Error al obtener información del deportista:', err);
+    console.error('Error completo:', err);
+    return null;
+  }
+}, [authHeaders]);
   // Obtener cursos disponibles para inscripción
   const fetchCursosDisponibles = useCallback(async () => {
     try {
@@ -216,55 +270,165 @@ const InscribirCurso = () => {
     }));
   };
 
-  // Inscribirse a un curso
   const inscribirseCurso = async () => {
-    if (!cursoSeleccionado || !deportistaInfo) return;
+  console.log('=== CLICK EN INSCRIBIRSE ===');
+  
+  // Validación básica
+  if (!cursoSeleccionado || !deportistaInfo) {
+    setError('Información incompleta');
+    return;
+  }
 
-    try {
-      setInscribiendo(true);
-      setError(null);
+  try {
+    setInscribiendo(true);
+    setError(null);
 
-      const headers = authHeaders();
-      
-      // Datos para la inscripción
-      const inscripcionData = {
-        id_usuario: deportistaInfo.id_usuario,
-        observaciones: formData.observaciones
-      };
+    const headers = authHeaders();
 
-      const response = await fetch(`/api/cursos/${cursoSeleccionado.id_curso}/inscribir`, {
-        method: 'POST',
-        headers: headers,
-        body: JSON.stringify(inscripcionData)
-      });
-
-      if (!response.ok) {
-        const errorData = await parseJSONResponse(response);
-        throw new Error(errorData.message || 'Error al realizar la inscripción');
+    // PASO 1: OBTENER GRUPOS DEL CURSO
+    console.log('Obteniendo grupos para el curso:', cursoSeleccionado.id_curso);
+    
+    let gruposDisponibles = [];
+    
+    // Opción A: Si el curso ya incluye grupos en la respuesta
+    if (cursoSeleccionado.grupos && Array.isArray(cursoSeleccionado.grupos)) {
+      gruposDisponibles = cursoSeleccionado.grupos;
+      console.log('Grupos desde curso:', gruposDisponibles);
+    } 
+    // Opción B: Usar el método del controlador que ya tienes
+    else {
+      try {
+        console.log('Llamando a cursosDisponibles para obtener grupos...');
+        const gruposResponse = await fetch('/api/inscripciones-cursos/cursos-disponibles', {
+          headers: headers
+        });
+        
+        if (gruposResponse.ok) {
+          const cursosConGrupos = await parseJSONResponse(gruposResponse);
+          console.log('Cursos con grupos:', cursosConGrupos);
+          
+          // Buscar nuestro curso específico
+          const cursoConGrupos = cursosConGrupos.find(c => c.id_curso === cursoSeleccionado.id_curso);
+          if (cursoConGrupos && cursoConGrupos.grupos) {
+            gruposDisponibles = cursoConGrupos.grupos;
+          }
+        }
+      } catch (gruposError) {
+        console.warn('No se pudieron obtener grupos:', gruposError);
+        
+        // Opción C: Llamar directamente a la relación de grupos
+        try {
+          const gruposDirecto = await fetch(`/api/cursos/${cursoSeleccionado.id_curso}/grupos`, {
+            headers: headers
+          });
+          
+          if (gruposDirecto.ok) {
+            const gruposData = await parseJSONResponse(gruposDirecto);
+            gruposDisponibles = gruposData.data || gruposData || [];
+          }
+        } catch {
+          // Si todo falla, usar un grupo por defecto (TEMPORAL)
+          gruposDisponibles = [{ id_grupo: 1, nombre: 'Grupo Principal' }];
+        }
       }
+    }
 
-      const result = await parseJSONResponse(response);
+    console.log('Grupos disponibles:', gruposDisponibles);
+
+    // Filtrar grupos activos con cupo disponible
+    const gruposConCupo = gruposDisponibles.filter(grupo => {
+      if (!grupo || !grupo.id_grupo) return false;
       
-      // Actualizar lista de cursos disponibles
-      const cursosActualizados = cursosDisponibles.filter(
-        curso => curso.id_curso !== cursoSeleccionado.id_curso
-      );
-      setCursosDisponibles(cursosActualizados);
+      const cupoActual = grupo.cupo_actual || 0;
+      const cupoMaximo = grupo.cupo_maximo || 999;
+      const estado = grupo.estado || 'activo';
+      
+      return cupoActual < cupoMaximo && estado === 'activo';
+    });
+
+    console.log('Grupos con cupo:', gruposConCupo);
+
+    if (gruposConCupo.length === 0) {
+      throw new Error('No hay grupos con cupo disponible para este curso');
+    }
+
+    // Seleccionar el primer grupo con cupo (o dejar que el usuario elija)
+    const grupoSeleccionado = gruposConCupo[0];
+    console.log('Grupo seleccionado:', grupoSeleccionado);
+
+    // PASO 2: USAR EL CONTROLADOR CORRECTO (InscripcionCursoController)
+    const inscripcionData = {
+      id_curso: cursoSeleccionado.id_curso,
+      id_grupo: grupoSeleccionado.id_grupo, // REQUERIDO
+      id_usuario: deportistaInfo.id_usuario, // REQUERIDO
+      id_deportista: deportistaInfo.id_deportista, // REQUERIDO
+      observaciones: formData.observaciones || ''
+    };
+
+    console.log('Datos para InscripcionCursoController:', inscripcionData);
+    console.log('Endpoint correcto: /api/inscripciones-cursos');
+
+    // USAR EL ENDPOINT CORRECTO
+    const response = await fetch('/api/inscripciones-cursos', {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify(inscripcionData)
+    });
+
+    console.log('Response status:', response.status);
+    console.log('Response ok:', response.ok);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Error completo:', errorText);
+      
+      let errorMessage = 'Error al realizar la inscripción';
+      
+      if (errorText.includes('id_grupo') || errorText.includes('grupo')) {
+        errorMessage = 'Error: No se pudo asignar un grupo válido para el curso.';
+      } else if (errorText.includes('id_deportista') || errorText.includes('deportista')) {
+        errorMessage = 'Tu perfil de deportista no es válido.';
+      } else if (errorText.includes('cupo')) {
+        errorMessage = 'No hay cupos disponibles en este grupo.';
+      } else if (errorText.includes('ya está inscrito')) {
+        errorMessage = 'Ya estás inscrito en este grupo.';
+      } else if (errorText.includes('no pertenece')) {
+        errorMessage = 'El grupo no pertenece al curso seleccionado.';
+      }
+      
+      throw new Error(errorMessage);
+    }
+
+    const result = await parseJSONResponse(response);
+    console.log('Inscripción exitosa:', result);
+
+    // Éxito
+    setInscripcionExitosa(true);
+    
+    // Actualizar lista de cursos disponibles
+    const cursosActualizados = cursosDisponibles.filter(
+      curso => curso.id_curso !== cursoSeleccionado.id_curso
+    );
+    setCursosDisponibles(cursosActualizados);
+
+    // Cerrar modal después de 2 segundos
+    setTimeout(() => {
+      cerrarModal();
+      setInscripcionExitosa(false);
       
       // Mostrar mensaje de éxito
-      setInscripcionExitosa(true);
-      setTimeout(() => {
-        cerrarModal();
-        setInscripcionExitosa(false);
-      }, 2000);
+      if (window.alert) {
+        alert(`¡Inscripción exitosa!\n\nCurso: ${cursoSeleccionado.nombre}\nGrupo: ${grupoSeleccionado.nombre || 'Grupo ' + grupoSeleccionado.id_grupo}`);
+      }
+    }, 2000);
 
-    } catch (err) {
-      console.error('Error al inscribirse:', err);
-      setError(err.message || 'Error al realizar la inscripción');
-    } finally {
-      setInscribiendo(false);
-    }
-  };
+  } catch (err) {
+    console.error('Error en inscripción:', err);
+    setError(err.message || 'Error al realizar la inscripción');
+  } finally {
+    setInscribiendo(false);
+  }
+};
 
   // Componente de tarjeta de curso
   const CursoCard = ({ curso }) => {

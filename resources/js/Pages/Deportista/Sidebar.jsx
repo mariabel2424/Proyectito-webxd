@@ -42,10 +42,7 @@ const Sidebar = () => {
                 <div className="sidebar-section">
                     <h6 className="sidebar-section-title">ENTRENAMIENTO</h6>
                     
-                    <a href="/deportista/grupos-curso" className="sidebar-link">
-                        <i className="fas fa-users"></i>
-                        <span>Mis Grupos</span>
-                    </a>
+
                     <a href="/deportista/instructores" className="sidebar-link">
                         <i className="fas fa-chalkboard-teacher"></i>
                         <span>Mis Instructores</span>
@@ -73,10 +70,7 @@ const Sidebar = () => {
                 {/* Competiciones */}
                 <div className="sidebar-section">
                     <h6 className="sidebar-section-title">COMPETICIONES</h6>
-                    <a href="/deportista/campeonatos" className="sidebar-link">
-                        <i className="fas fa-trophy"></i>
-                        <span>Mis Campeonatos</span>
-                    </a>
+
                     <a href="/deportista/partidos" className="sidebar-link">
                         <i className="fas fa-futbol"></i>
                         <span>Mis Partidos</span>
@@ -125,46 +119,7 @@ const Sidebar = () => {
                     </a>
                 </div>
 
-                {/* Comunicaciones */}
-                <div className="sidebar-section">
-                    <h6 className="sidebar-section-title">COMUNICACIONES</h6>
-                    <a href="/deportista/notificaciones" className="sidebar-link">
-                        <i className="fas fa-bell"></i>
-                        <span>Notificaciones</span>
-                        <span className="badge badge-notification">3</span>
-                    </a>
-                    <a href="/deportista/mensajes" className="sidebar-link">
-                        <i className="fas fa-envelope"></i>
-                        <span>Mensajes</span>
-                        <span className="badge badge-notification">1</span>
-                    </a>
-                </div>
 
-                {/* Documentos */}
-                <div className="sidebar-section">
-                    <h6 className="sidebar-section-title">DOCUMENTOS</h6>
-                    <a href="/deportista/archivos" className="sidebar-link">
-                        <i className="fas fa-file-upload"></i>
-                        <span>Mis Documentos</span>
-                    </a>
-                    <a href="/deportista/resultados" className="sidebar-link">
-                        <i className="fas fa-medal"></i>
-                        <span>Resultados</span>
-                    </a>
-                </div>
-
-                {/* Configuración */}
-                <div className="sidebar-section">
-                    <h6 className="sidebar-section-title">CONFIGURACIÓN</h6>
-                    <a href="/deportista/configuracion" className="sidebar-link">
-                        <i className="fas fa-cog"></i>
-                        <span>Configuración</span>
-                    </a>
-                    <a href="/deportista/seguridad" className="sidebar-link">
-                        <i className="fas fa-shield-alt"></i>
-                        <span>Seguridad</span>
-                    </a>
-                </div>
             </div>
 
             {/* Footer */}

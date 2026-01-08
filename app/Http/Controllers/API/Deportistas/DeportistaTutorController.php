@@ -4,7 +4,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-use App\Models\DeportistaTutor;
+use App\Models\deportistaTutores as DeportistaTutor; // Usamos un alias
 use App\Models\Deportista;
 use App\Models\Tutor;
 use Illuminate\Http\Request;
